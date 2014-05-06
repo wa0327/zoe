@@ -1,12 +1,11 @@
 package com.jack.zoe;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.app.Activity;
 import android.content.res.Resources;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 class MessageAnimation {
 	
@@ -38,18 +37,26 @@ class MessageAnimation {
         message3.Message = resources.getString(R.string.message3);
         message3.TextView = (TextView)context.findViewById(R.id.message3);
 
+        MessagePair message4 = new MessagePair();
+        message4.Message = resources.getString(R.string.message4);
+        message4.TextView = (TextView)context.findViewById(R.id.message4);
+
+        MessagePair message5 = new MessagePair();
+        message5.Message = resources.getString(R.string.message5);
+        message5.TextView = (TextView)context.findViewById(R.id.message5);
+
         MessagePair signature = new MessagePair();
         signature.Message = resources.getString(R.string.signature);
         signature.TextView = (TextView)context.findViewById(R.id.signature);
 
         this.context = context;
-		this.messagePairs = new MessagePair[] { greetings, message1, message2, message3, signature };
+		this.messagePairs = new MessagePair[] { greetings, message1, message2, message3, message4, message5, signature };
 	}
 	
 	private void clearAllMessage() {
-		for (int i = 0; i < this.messagePairs.length; i++) {
-			messagePairs[i].TextView.setText("");
-		}
+        for (MessagePair messagePair : this.messagePairs) {
+            messagePair.TextView.setText("");
+        }
 	}
 	
 	public void start() {
@@ -63,16 +70,17 @@ class MessageAnimation {
 			public void run() {
 				if (this.isRunning()) {
 					context.runOnUiThread(this.currentMessage);
-				} else if (this.hasNext()) {
-					currentMessage = this.createNextRunner();
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-					}
-				}
-				else {
-					timer.cancel();
-				}
+				} else {
+                    if (this.hasNext()) {
+                        currentMessage = this.createNextRunner();
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ignored) {
+                        }
+                    } else {
+                        timer.cancel();
+                    }
+                }
 			}
 			
 			private boolean isRunning() {
